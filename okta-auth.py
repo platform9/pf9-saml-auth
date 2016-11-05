@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import base64
-import collections
 import os
 import re
 import sys
@@ -9,12 +8,6 @@ import urlparse
 import requests
 
 from oktaauth import models
-
-def flatten_headers(headers):
-    for key, value in list(headers.items()):
-        if isinstance(value, collections.Iterable):
-            headers[key] = ','.join(value)
-
 
 def post_call(session, url, headers, payload):
     if headers['Content-Type'] == 'application/x-www-form-urlencoded':
