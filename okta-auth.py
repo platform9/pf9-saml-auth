@@ -57,9 +57,20 @@ def get_unscoped_token(session, pf9_endpoint):
     :type session: list
     :type pf9_endpoint: str
     """
-    resp = session.get(pf9_endpoint + '/keystone_admin/v3/OS-FEDERATION/identity_providers/IDP1/protocols/saml2/auth')
-    os_token = resp.headers['X-Subject-Token']
-    return os_token
+    saml_auth_url = '/keystone_admin/v3/OS-FEDERATION/identity_providers/IDP1/protocols/saml2/auth'
+
+    try:
+        resp = session.get(pf9_endpoint + saml_auth_url)
+
+        if resp.status_code == 401:
+            sys.exit("Unable to obtain unscoped token. Incorrect username / password.")
+        elif resp.status_code == 201:
+            os_token = resp.headers['X-Subject-Token']
+            return os_token
+        else:
+            sys.exit("HTTP %d. Unable to obtain unscoped token." % resp.status_code)
+    except requests.exceptions.RequestException as excp:
+        sys.exit(excp)
 
 def get_tenant_id(session, token, tenant, pf9_endpoint):
     """
@@ -76,13 +87,17 @@ def get_tenant_id(session, token, tenant, pf9_endpoint):
     """
     url = pf9_endpoint + '/keystone/v3/OS-FEDERATION/projects'
     headers = {'X-Auth-Token': token}
-    resp = session.get(url, headers=headers, allow_redirects=False)
+    try:
+        resp = session.get(url, headers=headers, allow_redirects=False)
+    except requests.exceptions.RequestException:
+        return None
 
     tenant_id = None
-    for project in resp.json()['projects']:
-        if tenant == project['name']:
-            tenant_id = project['id']
-            break
+    if resp.status_code == 200:
+        for project in resp.json()['projects']:
+            if tenant == project['name']:
+                tenant_id = project['id']
+                break
 
     return tenant_id
 
@@ -116,7 +131,10 @@ def get_scoped_token(session, os_token, tenant_id, pf9_endpoint):
     }
 
     resp = post_call(session, url, headers, payload)
-    return resp.headers['X-Subject-Token']
+    if resp.status_code == 201:
+        return resp.headers['X-Subject-Token']
+    else:
+        return None
 
 def main():
     auth_url = urlparse.urlparse(os.environ["OS_AUTH_URL"])
@@ -125,7 +143,11 @@ def main():
     password = os.environ["OS_PASSWORD"]
     tenant = os.environ["OS_TENANT_NAME"]
 
-    response = requests.get(pf9_endpoint + "/Shibboleth.sso/Login", allow_redirects=False)
+    try:
+        response = requests.get(pf9_endpoint + "/Shibboleth.sso/Login", allow_redirects=False)
+    except requests.exceptions.RequestException as excp:
+        sys.exit(excp)
+
     if response.status_code == 302:
         redirect_url = urlparse.urlparse(response.headers["Location"])
 
@@ -160,7 +182,11 @@ def main():
                 sys.exit("Unable to find tenant {0}".format(tenant))
 
             # Return scoped authentication token
-            print get_scoped_token(session, os_token, tenant_id, pf9_endpoint)
+            scoped_token = get_scoped_token(session, os_token, tenant_id, pf9_endpoint)
+            if scoped_token is not None:
+                print scoped_token
+            else:
+                sys.exit("Unable to retrieve scoped token.")
         else:
             sys.exit("Unknown SAML provider.")
 
