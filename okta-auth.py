@@ -138,7 +138,8 @@ def main():
                 app_info.group(2),
                 username,
                 password,
-                ""
+                # MFA code
+                None
             )
 
             try:
