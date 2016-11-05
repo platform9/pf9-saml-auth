@@ -4,6 +4,7 @@ import base64
 import collections
 import os
 import re
+import sys
 import urlparse
 import requests
 
@@ -39,14 +40,28 @@ def get_unscoped_token(session, pf9_endpoint):
     os_token = resp.headers['X-Subject-Token']
     return os_token
 
-def get_tenant(session, os_token, tenant, pf9_endpoint):
+def get_tenant_id(session, token, tenant, pf9_endpoint):
+    """
+    Obtain tenant / project ID for the given tenant.
+
+    :param session: requests.Session
+    :param token: Unscoped Keystone token
+    :param tenant: Tenant / Project name
+    :param pf9_endpoint: FQDN of Platform9 controller
+    :type session: list
+    :type token: str
+    :type tenant: str
+    :type pf9_endpoint: str
+    """
     url = pf9_endpoint + '/keystone/v3/OS-FEDERATION/projects'
-    headers = {'X-Auth-Token': os_token}
+    headers = {'X-Auth-Token': token}
     resp = session.get(url, headers=headers, allow_redirects=False)
 
+    tenant_id = None
     for project in resp.json()['projects']:
         if tenant == project['name']:
             tenant_id = project['id']
+            break
 
     return tenant_id
 
@@ -98,7 +113,10 @@ def main():
             session = requests.Session()
             get_os_token(session, saml_response, pf9_endpoint)
             os_token = get_unscoped_token(session, pf9_endpoint)
-            tenant_id = get_tenant(session, os_token, tenant, pf9_endpoint)
+
+            tenant_id = get_tenant_id(session, os_token, tenant, pf9_endpoint)
+            if tenant_id is None:
+                sys.exit("Unable to find tenant {0}".format(tenant))
             print get_scoped_token(session, os_token, tenant_id, pf9_endpoint)
         else:
             print "Unknown SAML provider."
