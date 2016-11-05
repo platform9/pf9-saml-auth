@@ -75,6 +75,8 @@ def get_unscoped_token(session, pf9_endpoint):
     except requests.exceptions.RequestException as excp:
         sys.exit(excp)
 
+    os_token = resp.headers['X-Subject-Token']
+    return os_token
 
 def get_tenant_id(session, token, tenant, pf9_endpoint):
     """
