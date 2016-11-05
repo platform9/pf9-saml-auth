@@ -140,7 +140,14 @@ def main():
                 ""
             )
 
-            saml_response = okta.auth()
+            try:
+                saml_response = okta.auth()
+            except Exception as exp:
+                print exp
+
+            # Exit if authentication failed
+            if saml_response is False:
+                sys.exit("Invalid username / password provided.")
 
             session = requests.Session()
             get_os_token(session, saml_response, pf9_endpoint)
@@ -149,9 +156,11 @@ def main():
             tenant_id = get_tenant_id(session, os_token, tenant, pf9_endpoint)
             if tenant_id is None:
                 sys.exit("Unable to find tenant {0}".format(tenant))
+
+            # Return scoped authentication token
             print get_scoped_token(session, os_token, tenant_id, pf9_endpoint)
         else:
-            print "Unknown SAML provider."
+            sys.exit("Unknown SAML provider.")
 
 if __name__ == '__main__':
     main()
