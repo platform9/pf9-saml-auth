@@ -22,12 +22,13 @@ def post_call(session, url, headers, payload):
     :type headers: dict
     :type payload: str
     """
+    post_args = dict(headers=headers, allow_redirects=False)
     if headers['Content-Type'] == 'application/x-www-form-urlencoded':
-        resp = session.post(url, headers=headers, data=payload, allow_redirects=False)
+        post_args['data'] = payload
     elif headers['Content-Type'] == 'application/json':
-        resp = session.post(url, headers=headers, json=payload, allow_redirects=False)
+        post_args['json'] = payload
 
-    return resp
+    return session.post(url, **post_args)
 
 def get_os_token(session, saml_assert, pf9_endpoint):
     """
