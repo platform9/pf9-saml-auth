@@ -10,6 +10,18 @@ import requests
 from oktaauth import models
 
 def post_call(session, url, headers, payload):
+    """
+    Helper method to POST data with the correct content type.
+
+    :param session: requests.Session
+    :param url: Target URL
+    :param headers: HTTP request headers
+    :param payload: Request payload
+    :type session: list
+    :type url: str
+    :type headers: dict
+    :type payload: str
+    """
     if headers['Content-Type'] == 'application/x-www-form-urlencoded':
         resp = session.post(url, headers=headers, data=payload, allow_redirects=False)
     elif headers['Content-Type'] == 'application/json':
@@ -21,6 +33,13 @@ def get_os_token(session, saml_assert, pf9_endpoint):
     """
     Provide authenticated SAML assertion to Shibboleth to obtain authentication
     cookie.
+
+    :param session: requests.Session
+    :param saml_assert: SAML assertion
+    :param pf9_endpoint: Platform9 controller
+    :type session: list
+    :type saml_assert: str
+    :type pf9_endpoint: str
     """
     url = pf9_endpoint + '/Shibboleth.sso/SAML2/POST'
     headers = {'Content-Type':'application/x-www-form-urlencoded'}
@@ -29,6 +48,14 @@ def get_os_token(session, saml_assert, pf9_endpoint):
     post_call(session, url, headers, payload)
 
 def get_unscoped_token(session, pf9_endpoint):
+    """
+    Obtain unscoped token from Keystone using Shibboleth authentication cookie.
+
+    :param session: requests.Session
+    :param pf9_endpoint: Platform9 controller
+    :type session: list
+    :type pf9_endpoint: str
+    """
     resp = session.get(pf9_endpoint + '/keystone_admin/v3/OS-FEDERATION/identity_providers/IDP1/protocols/saml2/auth')
     os_token = resp.headers['X-Subject-Token']
     return os_token
@@ -59,6 +86,18 @@ def get_tenant_id(session, token, tenant, pf9_endpoint):
     return tenant_id
 
 def get_scoped_token(session, os_token, tenant_id, pf9_endpoint):
+    """
+    Obtain scoped token for the given tenant.
+
+    :param session: requests.Session
+    :param os_token: Unscoped token
+    :param tenant_id: UUID of tenant / project
+    :param pf9_endpoint: Platform9 controller
+    :type session: list
+    :type os_token: str
+    :type tenant_id: str
+    :type pf9_endpoint: str
+    """
     url = pf9_endpoint + '/keystone/v3/auth/tokens?nocatalog'
     headers = {'Content-Type':'application/json'}
     payload = {
