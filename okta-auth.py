@@ -9,6 +9,7 @@ import requests
 
 from oktaauth import models
 
+
 def post_call(session, url, headers, payload):
     """
     Helper method to POST data with the correct content type.
@@ -30,6 +31,7 @@ def post_call(session, url, headers, payload):
 
     return session.post(url, **post_args)
 
+
 def get_os_token(session, saml_assert, pf9_endpoint):
     """
     Provide authenticated SAML assertion to Shibboleth to obtain authentication
@@ -43,10 +45,11 @@ def get_os_token(session, saml_assert, pf9_endpoint):
     :type pf9_endpoint: str
     """
     url = pf9_endpoint + '/Shibboleth.sso/SAML2/POST'
-    headers = {'Content-Type':'application/x-www-form-urlencoded'}
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     payload = {'SAMLResponse': base64.b64encode(saml_assert)}
 
     post_call(session, url, headers, payload)
+
 
 def get_unscoped_token(session, pf9_endpoint):
     """
@@ -71,6 +74,7 @@ def get_unscoped_token(session, pf9_endpoint):
             sys.exit("HTTP %d. Unable to obtain unscoped token." % resp.status_code)
     except requests.exceptions.RequestException as excp:
         sys.exit(excp)
+
 
 def get_tenant_id(session, token, tenant, pf9_endpoint):
     """
@@ -101,6 +105,7 @@ def get_tenant_id(session, token, tenant, pf9_endpoint):
 
     return tenant_id
 
+
 def get_scoped_token(session, os_token, tenant_id, pf9_endpoint):
     """
     Obtain scoped token for the given tenant.
@@ -115,7 +120,7 @@ def get_scoped_token(session, os_token, tenant_id, pf9_endpoint):
     :type pf9_endpoint: str
     """
     url = pf9_endpoint + '/keystone/v3/auth/tokens?nocatalog'
-    headers = {'Content-Type':'application/json'}
+    headers = {'Content-Type': 'application/json'}
     payload = {
         "auth": {
             "identity": {
@@ -136,7 +141,9 @@ def get_scoped_token(session, os_token, tenant_id, pf9_endpoint):
     else:
         return None
 
+
 def main():
+    """Main entry point"""
     auth_url = urlparse.urlparse(os.environ["OS_AUTH_URL"])
     pf9_endpoint = "{0}://{1}".format(auth_url.scheme, auth_url.hostname)
     username = os.environ["OS_USERNAME"]
@@ -144,7 +151,9 @@ def main():
     tenant = os.environ["OS_TENANT_NAME"]
 
     try:
-        response = requests.get(pf9_endpoint + "/Shibboleth.sso/Login", allow_redirects=False)
+        response = requests.get(
+            pf9_endpoint + "/Shibboleth.sso/Login",
+            allow_redirects=False)
     except requests.exceptions.RequestException as excp:
         sys.exit(excp)
 
@@ -152,7 +161,10 @@ def main():
         redirect_url = urlparse.urlparse(response.headers["Location"])
 
         if re.search("okta", redirect_url.hostname):
-            app_info = re.match(r"^\/app\/(\w+)\/(\w+)\/sso/saml$", redirect_url.path)
+            app_info = re.match(
+                r"^\/app\/(\w+)\/(\w+)\/sso/saml$",
+                redirect_url.path
+            )
 
             okta = models.OktaSamlAuth(
                 redirect_url.hostname,
@@ -182,7 +194,11 @@ def main():
                 sys.exit("Unable to find tenant {0}".format(tenant))
 
             # Return scoped authentication token
-            scoped_token = get_scoped_token(session, os_token, tenant_id, pf9_endpoint)
+            scoped_token = get_scoped_token(
+                session,
+                os_token,
+                tenant_id,
+                pf9_endpoint)
             if scoped_token is not None:
                 print scoped_token
             else:
