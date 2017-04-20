@@ -4,6 +4,7 @@ federated authentication against non-ECP compliant SAML identity providers.
 
 ## Supported providers
 
+* Microsoft AD FS
 * [Okta](http://www.okta.com/)
 * [OneLogin](http://www.onelogin.com/)
 

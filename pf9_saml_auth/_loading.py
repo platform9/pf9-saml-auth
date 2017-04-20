@@ -14,6 +14,34 @@ import pf9_saml_auth
 from keystoneauth1 import loading
 
 
+class V3Pf9ADFSPassword(loading.BaseFederationLoader):
+
+    @property
+    def plugin_class(self):
+        return pf9_saml_auth.V3Pf9ADFSPassword
+
+    @property
+    def available(self):
+        return pf9_saml_auth._ADFS_AVAILABLE
+
+    def get_options(self):
+        options = super(V3Pf9ADFSPassword, self).get_options()
+
+        options.extend([
+            loading.Opt('service-provider-endpoint',
+                        help="Service Provider's Endpoint"),
+            loading.Opt('service-provider-entity-id',
+                        help="Service Provider's SAML SP Entity ID"),
+            loading.Opt('identity-provider-url',
+                        help=('An Identity Provider URL, where the SAML2 '
+                              'authentication request will be sent.')),
+            loading.Opt('username', help='Username'),
+            loading.Opt('password', secret=True, help='Password')
+        ])
+
+        return options
+
+
 class V3Pf9SamlOkta(loading.BaseFederationLoader):
 
     @property
