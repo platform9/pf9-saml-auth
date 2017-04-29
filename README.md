@@ -24,6 +24,7 @@ export OS_USERNAME="<IdP username>"
 export OS_PASSWORD="<IdP password>"
 export OS_TENANT_NAME="<tenant>"
 export OS_PROJECT_DOMAIN_ID=${OS_PROJECT_DOMAIN_ID:-"default"}
+export OS_IDENTITY_API_VERSION=3
 export OS_IDENTITY_PROVIDER=${OS_IDENTITY_PROVIDER:-"IDP1"}
 export OS_PROTOCOL=saml2
 
