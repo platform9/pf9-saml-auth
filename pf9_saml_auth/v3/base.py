@@ -161,28 +161,6 @@ class BasePF9SAMLPlugin(v3.FederationBaseAuth):
         """Return redirect url."""
         return self.__redirect_url or self._get_redirect_url()
 
-    @property
-    def federated_token_url(self):
-        """Full URL where authorization data is sent.
-
-        Override v3.FederationBaseAuth.federated_token_url to provide the
-        auth URL for Platform9 managed OpenStack.
-
-        :returns: URL containing federated token auth endpoint
-        :rtype: str
-        """
-        auth_url = self.auth_url.replace('keystone', 'keystone_admin')
-        values = {
-            'host': auth_url.rstrip('/'),
-            'identity_provider': self.identity_provider,
-            'protocol': self.protocol
-        }
-        url = ("%(host)s/OS-FEDERATION/identity_providers/"
-               "%(identity_provider)s/protocols/%(protocol)s/auth")
-        url = url % values
-
-        return url
-
     def get_unscoped_auth_ref(self, session, **kwargs):
         """Obtain unscoped token after authenticating with SAML IdP.
 
