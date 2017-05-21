@@ -56,6 +56,7 @@ setup(
     entry_points={
         "keystoneauth1.plugin": [
             "v3pf9samladfs = pf9_saml_auth._loading:V3Pf9ADFSPassword",
+            "v3pf9samlgeneric = pf9_saml_auth._loading:V3Pf9SamlGeneric",
             "v3pf9samlokta = pf9_saml_auth._loading:V3Pf9SamlOkta",
             "v3pf9samlonelogin = pf9_saml_auth._loading:V3Pf9SamlOnelogin",
         ]
