@@ -15,7 +15,6 @@
 """BasePF9SAMLPlugin class."""
 
 import base64
-import sys
 import urlparse
 
 from keystoneauth1 import access
@@ -133,8 +132,15 @@ class BasePF9SAMLPlugin(v3.FederationBaseAuth):
                 self._pf9_endpoint + "/Shibboleth.sso/Login",
                 authenticated=False,
                 redirect=False)
-        except Exception as excp:
-            sys.exit(excp)
+
+        except exceptions.http.InternalServerError as excp:
+            raise exceptions.InternalServerError(
+                http_status=excp.http_status,
+                message="Unable to determine Identity Provider redirect URL"
+                " from Service Provivder.",
+                details=excp.message,
+                method=excp.method,
+                url=excp.url)
 
         if response.status_code == 302:
             self.__redirect_url = response.headers["Location"]
@@ -181,18 +187,23 @@ class BasePF9SAMLPlugin(v3.FederationBaseAuth):
         :param session:
         :type session: keystoneauth1.session.Session
         """
-        saml_response = self._authenticate(session)
+        try:
+            saml_response = self._authenticate(session)
+        except Exception as e:
+            raise e
 
         # Exit if authentication failed
         if saml_response is False:
-            sys.exit("Invalid username / password provided.")
+            raise exceptions.AuthorizationFailure(
+                "Unable to obtain SAML assertion. Authentication failed or"
+                " server error.")
 
         self._get_auth_cookie(session, saml_response)
 
         if self._cookies(session) is False:
             raise exceptions.AuthorizationFailure(
                 "Session object doesn't contain a cookie, therefore you are "
-                "not allowed to enter the Identity Provider's protected area.")
+                "not allowed to enter the Service Provider's protected area.")
 
         resp = session.get(self.federated_token_url,
                            authenticated=False,
