@@ -67,7 +67,7 @@ class BasePF9SAMLPlugin(v3.FederationBaseAuth):
         _auth_url = urlparse.urlparse(auth_url)
         self._pf9_endpoint = "{0}://{1}".format(
             _auth_url.scheme,
-            _auth_url.hostname,
+            _auth_url.netloc,
         )
 
     def _authenticate(self, session):
