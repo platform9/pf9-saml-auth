@@ -1,0 +1,4 @@
+keystoneauth1
+lxml
+oktaauth
+python-keystoneclient
