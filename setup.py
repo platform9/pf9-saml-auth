@@ -11,13 +11,20 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+import os
 
 from setuptools import setup
+
+
+def read(fname):
+    with open(os.path.join(os.path.dirname(__file__), fname)) as fn:
+        return fn.read()
 
 setup(
     name='pf9-saml-auth',
     version='0.0.2',
     description='Platform9 SAML Authentication Library for OpenStack Identity',
+    long_description=read('README.rst'),
     url='http://github.com/platform9/pf9-saml-auth',
     author='Blake Covarrubias',
     author_email='blake@platform9.com',

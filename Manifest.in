@@ -1,0 +1,4 @@
+include README.*
+include LICENSE
+include *.txt
+include setup.py
