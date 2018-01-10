@@ -25,10 +25,22 @@ setup(
     version='0.0.2',
     description='Platform9 SAML Authentication Library for OpenStack Identity',
     long_description=read('README.rst'),
-    url='http://github.com/platform9/pf9-saml-auth',
+    url='https://github.com/platform9/pf9-saml-auth',
     author='Blake Covarrubias',
     author_email='blake@platform9.com',
     license='Apache License 2.0',
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Environment :: OpenStack',
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+    ],
+    keywords='openstack keystone saml',
     packages=[
         'pf9_saml_auth',
         'pf9_saml_auth.v3',
@@ -39,6 +51,7 @@ setup(
         'oktaauth',
         'python-keystoneclient',
     ],
+    python_requires='>=2.7, !=3.*',
     zip_safe=False,
     entry_points={
         "keystoneauth1.plugin": [
