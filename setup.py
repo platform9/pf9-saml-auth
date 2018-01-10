@@ -20,6 +20,9 @@ def read(fname):
     with open(os.path.join(os.path.dirname(__file__), fname)) as fn:
         return fn.read()
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
 setup(
     name='pf9-saml-auth',
     version='0.0.2',
@@ -33,12 +36,7 @@ setup(
         'pf9_saml_auth',
         'pf9_saml_auth.v3',
     ],
-    install_requires=[
-        'keystoneauth1',
-        'lxml',
-        'oktaauth',
-        'python-keystoneclient',
-    ],
+    install_requires=required,
     zip_safe=False,
     entry_points={
         "keystoneauth1.plugin": [
