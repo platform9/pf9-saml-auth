@@ -46,10 +46,10 @@ setup(
         'pf9_saml_auth.v3',
     ],
     install_requires=[
-        'keystoneauth1',
-        'lxml',
+        'keystoneauth1==3.1.0',
+        'lxml==3.8.0',
         'oktaauth',
-        'python-keystoneclient',
+        'python-keystoneclient==3.13.0',
     ],
     python_requires='>=2.7, !=3.*',
     zip_safe=False,
