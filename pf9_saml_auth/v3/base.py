@@ -15,7 +15,7 @@
 """BasePF9SAMLPlugin class."""
 
 import base64
-import urlparse
+from six.moves.urllib.parse import urlparse
 
 from keystoneauth1 import access
 from keystoneauth1 import exceptions

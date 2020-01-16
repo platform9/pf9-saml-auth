@@ -15,7 +15,7 @@
 """OneLogin SAML authentication driver."""
 import base64
 import re
-import urlparse
+from six.moves.urllib.parse import urlparse
 from pf9_saml_auth.v3 import base
 
 
