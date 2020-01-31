@@ -40,7 +40,7 @@ class Password(base.BasePF9SAMLPlugin):
         :returns: Tuple containing app type & ID
         :rtype: tuple
         """
-        redirect_url = urlparse.urlparse(self._redirect_url())
+        redirect_url = urlparse(self._redirect_url())
         if re.search("okta", redirect_url.hostname):
             app_info = re.match(
                 r"^\/app\/(\w+)\/(\w+)\/sso/saml$",
