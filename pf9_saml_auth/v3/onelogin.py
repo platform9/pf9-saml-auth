@@ -15,7 +15,7 @@
 """OneLogin SAML authentication driver."""
 import base64
 import re
-import urlparse
+from six.moves import urllib
 from pf9_saml_auth.v3 import base
 
 
@@ -46,7 +46,7 @@ class Password(base.BasePF9SAMLPlugin):
         :returns: tuple containing subdomain & APP ID
         :rtype: tuple
         """
-        redirect_url = urlparse.urlparse(self._get_redirect_url())
+        redirect_url = urllib.parse.urlparse(self._get_redirect_url())
         if re.search("onelogin", redirect_url.hostname):
             subdomain = re.match(
                 r"^([a-z0-9\-]+).onelogin.com",

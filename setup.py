@@ -39,6 +39,8 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
     ],
     keywords='openstack keystone saml',
     packages=[
@@ -50,8 +52,9 @@ setup(
         'lxml',
         'oktaauth',
         'python-keystoneclient',
+        'six>=1.10.0',
     ],
-    python_requires='>=2.7, !=3.*',
+    python_requires='>=2.7',
     zip_safe=False,
     entry_points={
         "keystoneauth1.plugin": [
