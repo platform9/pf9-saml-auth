@@ -14,9 +14,12 @@
 
 """Okta SAML authentication driver."""
 import re
-import urlparse
+
 from oktaauth import models
+
 from pf9_saml_auth.v3 import base
+
+from six.moves.urllib import parse
 
 
 class Password(base.BasePF9SAMLPlugin):
@@ -40,7 +43,7 @@ class Password(base.BasePF9SAMLPlugin):
         :returns: Tuple containing app type & ID
         :rtype: tuple
         """
-        redirect_url = urlparse.urlparse(self._redirect_url())
+        redirect_url = parse.urlparse(self._redirect_url())
         if re.search("okta", redirect_url.hostname):
             app_info = re.match(
                 r"^\/app\/(\w+)\/(\w+)\/sso/saml$",
@@ -61,7 +64,7 @@ class Password(base.BasePF9SAMLPlugin):
 
         app_type, app_id = self._app_info()
         okta = models.OktaSamlAuth(
-            urlparse.urlparse(self._redirect_url()).hostname,
+            parse.urlparse(self._redirect_url()).hostname,
             app_type,
             app_id,
             self.username,
