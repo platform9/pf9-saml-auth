@@ -15,11 +15,12 @@
 """BasePF9SAMLPlugin class."""
 
 import base64
-import urlparse
 
 from keystoneauth1 import access
 from keystoneauth1 import exceptions
 from keystoneauth1.identity import v3
+
+from six.moves.urllib import parse
 
 
 class _Pf9Saml2TokenAuthMethod(v3.AuthMethod):
@@ -77,7 +78,7 @@ class BasePF9SAMLPlugin(v3.FederationBaseAuth):
         self.password = password
         self.__redirect_url = None
 
-        _auth_url = urlparse.urlparse(auth_url)
+        _auth_url = parse.urlparse(auth_url)
         self._pf9_endpoint = "{0}://{1}".format(
             _auth_url.scheme,
             _auth_url.netloc,
