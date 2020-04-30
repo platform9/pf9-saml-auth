@@ -16,6 +16,7 @@ Installation
 
 .. code:: bash
 
+    pip install https://github.com/platform9/oktaauth/archive/1.0.zip
     pip install pf9-saml-auth
 
 

@@ -20,9 +20,10 @@ def read(fname):
     with open(os.path.join(os.path.dirname(__file__), fname)) as fn:
         return fn.read()
 
+
 setup(
     name='pf9-saml-auth',
-    version='0.0.2',
+    version='1.0',
     description='Platform9 SAML Authentication Library for OpenStack Identity',
     long_description=read('README.rst'),
     url='https://github.com/platform9/pf9-saml-auth',
