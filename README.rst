@@ -18,6 +18,7 @@ Installation
 
     pip install https://github.com/platform9/oktaauth/archive/1.0.zip
     pip install pf9-saml-auth
+    With Python3 support: https://github.com/platform9/pf9-saml-auth/archive/1.0.zip
 
 
 Example CLI Usage
