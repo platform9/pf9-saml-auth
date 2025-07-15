@@ -46,7 +46,7 @@ class Password(base.BasePF9SAMLPlugin):
         redirect_url = parse.urlparse(self._redirect_url())
         if re.search("okta", redirect_url.hostname):
             app_info = re.match(
-                r"^\/app\/(\w+)\/(\w+)\/sso/saml$",
+                r"^\/app\/(\w+[\w-]*)\/(\w+)\/sso/saml$",
                 redirect_url.path
             )
             return app_info.groups(0)
