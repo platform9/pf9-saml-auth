@@ -130,7 +130,7 @@ class BasePF9SAMLPlugin(v3.FederationBaseAuth):
     def _get_redirect_url(self):
         try:
             response = self.session.get(
-                self._pf9_endpoint + "/Shibboleth.sso/Login",
+                self._pf9_endpoint + "/sso/IDP1/Shibboleth.sso/Login",
                 authenticated=False,
                 redirect=False)
 
